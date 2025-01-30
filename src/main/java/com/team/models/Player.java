@@ -1,5 +1,4 @@
-package team.fr.models;
-
+package com.team.models;
 import jakarta.persistence.*;
 import lombok.*;
 import jakarta.persistence.Entity;
@@ -14,7 +13,6 @@ import jakarta.persistence.Id;
 @Table(name = "players")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class Player {
 
     @Id
@@ -25,6 +23,7 @@ public class Player {
     @Getter @Setter
     private  String position;
 
+    @Getter @Setter
     @ManyToOne
     @JoinColumn(name = "team_id")
     private Team team;

@@ -1,8 +1,9 @@
-package team.fr.seeders;
+package com.team.seeders;
 
+import com.team.Repository.PlayerRepository;
+import com.team.models.Player;
 import org.springframework.boot.CommandLineRunner;
-import team.fr.Repository.PlayerRepository;
-import team.fr.models.Player;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +25,8 @@ public class PlayeurSeeder implements CommandLineRunner {
             // Générer 100 joueurs aléatoires
             for (int i = 1; i <= 100; i++) {
                  Player joueur = new Player();
-                joueur.setFirstName("Joueur " + i);
-                joueur.setFirstName("Name " + i);
-                joueur.setPoste(genererPosteAleatoire());
+                 joueur.setName("joueur "+i);
+                joueur.setPosition(genererPosteAleatoire());
                 joueurs.add(joueur);
             }
 

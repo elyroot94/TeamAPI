@@ -1,4 +1,4 @@
-package team.fr.models;
+package com.team.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -28,4 +28,9 @@ public class Team {
     @Getter @Setter
     private BigDecimal Budget;
 
+    public void addPlayer(Player player) {
+        player.setTeam(this);
+        players.add(player);
+
+    }
 }

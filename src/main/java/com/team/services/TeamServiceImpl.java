@@ -1,39 +1,38 @@
-package team.fr.services;
+package com.team.services;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import team.fr.Exceptions.RessourceNotFound;
-import team.fr.Repository.PlayerRepository;
-import team.fr.Repository.TeamRepository;
-import team.fr.dto.TeamRequestDto;
-import team.fr.dto.TeamResponseDto;
-import team.fr.mappers.TeamMapper;
-import team.fr.models.Player;
-import team.fr.models.Team;
+import com.team.Exceptions.RessourceNotFound;
+import com.team.Repository.PlayerRepository;
+import com.team.Repository.TeamRepository;
+import com.team.dto.TeamRequestDto;
+import com.team.dto.TeamResponseDto;
+import com.team.mappers.TeamMapper;
+import com.team.models.Player;
+import com.team.models.Team;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 
 import java.util.*;
 
-
+@Service
 public class TeamServiceImpl implements TeamService {
 
-    private final TeamRepository teamRepository;
-    private final PlayerRepository playerRepository;
-    private final TeamMapper teamMapper;
+   final private TeamRepository teamRepository;
+   final private PlayerRepository playerRepository;
 
 
-    public TeamServiceImpl(TeamRepository teamRepository, PlayerRepository playerRepository, TeamMapper teamMapper) {
+
+    public TeamServiceImpl(TeamRepository teamRepository, PlayerRepository playerRepository) {
         this.teamRepository = teamRepository;
         this.playerRepository = playerRepository;
-        this.teamMapper = teamMapper;
+
     }
 
 
     @Override
     public TeamResponseDto Create(TeamRequestDto teamRequestDto) {
-        Team team = teamMapper.teamRequestDtoToTeam(teamRequestDto);
-        var playersFromTeamRequestDto = Optional.ofNullable(teamRequestDto.getPlayers()).orElse(Collections.emptySet());
+        Team team = TeamMapper.INSTANCE.teamRequestDtoToTeam(teamRequestDto);
+        var playersFromTeamRequestDto = Optional.ofNullable(teamRequestDto.getPlayerIds()).orElse(Collections.emptySet());
         if (!playersFromTeamRequestDto.isEmpty()) {
             Set<Player> players = this.playerRepository.findPlayersByIds(playersFromTeamRequestDto);
             int count = this.playerRepository.countPlayersWithIds(playersFromTeamRequestDto);
@@ -45,7 +44,7 @@ public class TeamServiceImpl implements TeamService {
 
         }
         this.teamRepository.save(team);
-        return teamMapper.teamToTeamResponseDto(team);
+        return TeamMapper.INSTANCE.teamToTeamResponseDto(team);
     }
 
 

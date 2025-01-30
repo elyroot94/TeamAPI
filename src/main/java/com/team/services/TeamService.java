@@ -1,10 +1,11 @@
-package team.fr.services;
+package com.team.services;
 
 
+import com.team.dto.TeamRequestDto;
+import com.team.dto.TeamResponseDto;
 import org.springframework.stereotype.Service;
 
-import team.fr.dto.TeamRequestDto;
-import team.fr.dto.TeamResponseDto;
+
 
 @Service
 public interface TeamService {

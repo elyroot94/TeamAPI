@@ -1,9 +1,12 @@
-package team.fr.dto;
-
+package com.team.dto;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
+@AllArgsConstructor
+@NoArgsConstructor
 public class PlayerDto
 {
 

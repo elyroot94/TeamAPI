@@ -1,4 +1,4 @@
-package team.fr.dto;
+package com.team.dto;
 import lombok.*;
 
 import java.math.BigDecimal;

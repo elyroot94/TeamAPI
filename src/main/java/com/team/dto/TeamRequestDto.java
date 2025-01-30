@@ -1,4 +1,4 @@
-package team.fr.dto;
+package com.team.dto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -16,7 +16,7 @@ public class TeamRequestDto {
     private String name;
     @NotBlank(message = "acronym requis")
     private String acronym;
-    private Set<Long> players=new HashSet<>();
+    private Set<Long> playerIds=new HashSet<>();
     @NotBlank(message = "budge requis")
     private BigDecimal Budge;
 

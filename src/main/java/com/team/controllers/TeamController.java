@@ -1,23 +1,18 @@
-package team.fr.controllers;
+package com.team.controllers;
 
+import com.team.dto.TeamRequestDto;
+import com.team.dto.TeamResponseDto;
+import com.team.services.TeamService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.fr.dto.TeamRequestDto;
-import team.fr.dto.TeamResponseDto;
-import team.fr.models.Player;
-import team.fr.models.Team;
-import team.fr.services.TeamService;
 
-import java.util.ArrayList;
-import java.util.List;
 
-// les joueurs doivent exister dans la base
 @RestController
 @RequestMapping("/api/teams")
-public class TeamController {
+public class  TeamController {
 
     @Autowired
     private TeamService teamService;

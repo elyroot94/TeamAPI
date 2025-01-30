@@ -1,18 +1,14 @@
-package team.fr.Exceptions;
+package com.team.Exceptions;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@AllArgsConstructor
-@NoArgsConstructor(force = true)
-@Getter
-@Setter
 public class RessourceNotFound  extends RuntimeException{
 
-    private final String message;
-    private final  String Status;
+    final   private  String message;
+    final  private   String Status;
 
+    public  RessourceNotFound(String message, String Status) {
+        this.message = message;
+        this.Status = Status;
+    }
 
 }
