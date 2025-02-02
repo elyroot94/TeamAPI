@@ -6,27 +6,25 @@ import com.team.Repository.TeamRepository;
 import com.team.dto.TeamRequestDto;
 import com.team.dto.TeamResponseDto;
 import com.team.mappers.TeamMapper;
-import com.team.models.Player;
 import com.team.models.Team;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.team.models.Tri;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
 
 
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class TeamServiceImpl implements TeamService {
 
    final private TeamRepository teamRepository;
    final private PlayerRepository playerRepository;
-
-
-
-    public TeamServiceImpl(TeamRepository teamRepository, PlayerRepository playerRepository) {
-        this.teamRepository = teamRepository;
-        this.playerRepository = playerRepository;
-
-    }
 
 
     @Override
@@ -34,40 +32,31 @@ public class TeamServiceImpl implements TeamService {
         Team team = TeamMapper.INSTANCE.teamRequestDtoToTeam(teamRequestDto);
         var playersFromTeamRequestDto = Optional.ofNullable(teamRequestDto.getPlayerIds()).orElse(Collections.emptySet());
         if (!playersFromTeamRequestDto.isEmpty()) {
-            Set<Player> players = this.playerRepository.findPlayersByIds(playersFromTeamRequestDto);
             int count = this.playerRepository.countPlayersWithIds(playersFromTeamRequestDto);
             if (playersFromTeamRequestDto.size() != count) {
-                throw new RessourceNotFound("Les joueurs n'existe pas dans la base", "409");
+                throw new RessourceNotFound( "Les joueurs n'existe pas dans la base", "409");
             }
-            players.forEach(team::addPlayer);
+
 
 
         }
-        this.teamRepository.save(team);
-        return TeamMapper.INSTANCE.teamToTeamResponseDto(team);
+        return TeamMapper.INSTANCE.teamToTeamResponseDto(this.teamRepository.save(team));
     }
 
+    @Override
+    public Page<TeamResponseDto> listOFTeams(int pageNo, int pageSize,Tri sort, String direction) {
+        Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortDirection,sort.name()));
+        return switch (sort) {
+            case name ->
+                    TeamMapper.INSTANCE.listeOfTeamsWithTheirPlayersToResponseDto(this.teamRepository.listeOfTeamsWithTheirPlayersOrderByName(pageable));
+             case acronym ->
+                    TeamMapper.INSTANCE.listeOfTeamsWithTheirPlayersToResponseDto(this.teamRepository.listeOfTeamsWithTheirPlayersOrderByAcronym(pageable));
+            case budget ->
+                    TeamMapper.INSTANCE.listeOfTeamsWithTheirPlayersToResponseDto(this.teamRepository.listeOfTeamsWithTheirPlayersOrderByBudget(pageable));
 
-    /*@Override
-    public Page<TeamResponseDto> listOFTeams(String[] sort, int pageNo, int pageSize) {
-        List<Sort.Order> orders = new ArrayList<>();
-        Arrays.stream(sort).map(sortparam -> {
-            String[] parts = sortparam.split(":");
-            if (parts.length == 2) {
-                String field = parts[0];
-                String direction = parts[1].toLowerCase();
-                return new Sort.Order(Sort.Direction.fromString(direction), field);
-            } else {
-                throw new IllegalArgumentException("le format de trie est invalide ");
-            }
-        }).forEach(orders::add);
-        Sort sortnow = Sort.by(orders);
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sortnow);
-        this.teamRepository.listeOfTeamsWithTheirPlayers(pageable);
-        return teamMapper.listeOfTeamsWithTheirPlayersToResponseDto(this.teamRepository.listeOfTeamsWithTheirPlayers(pageable));
-
-
+        };
     }
-*/
+
 
 }

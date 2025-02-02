@@ -5,14 +5,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlayerDto
 {
 
-    @Getter
-    @Setter
     private String name;
-    @Getter @Setter
     private  String position;
 }

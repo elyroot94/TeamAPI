@@ -13,6 +13,6 @@ public interface PlayerRepository extends JpaRepository<Player,Long> {
     @Query("SELECT COUNT(p) FROM Player p WHERE p.id IN :ids")
     int countPlayersWithIds(@Param("ids") Set<Long>  ids);
 
-    @Query("SELECT P FROM Player p WHERE p.id IN :ids")
+    @Query("SELECT p FROM Player p WHERE p.id IN :ids")
     Set<Player> findPlayersByIds(@Param("ids") Set<Long> ids);
 }

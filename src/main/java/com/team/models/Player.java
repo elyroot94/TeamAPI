@@ -1,4 +1,5 @@
 package com.team.models;
+
 import jakarta.persistence.*;
 import lombok.*;
 import jakarta.persistence.Entity;
@@ -15,19 +16,26 @@ import jakarta.persistence.Id;
 @NoArgsConstructor
 public class Player {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Getter @Setter
-    private String name;
-    @Getter @Setter
-    private  String position;
 
-    @Getter @Setter
+    public Player(long id) {
+        this.id = id;
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+    @Getter
+    @Setter
+    private String name;
+    @Getter
+    @Setter
+    private String position;
+
+    @Getter
+    @Setter
     @ManyToOne
     @JoinColumn(name = "team_id")
     private Team team;
-
 
 
 }

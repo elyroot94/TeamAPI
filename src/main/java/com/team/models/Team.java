@@ -10,27 +10,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "teams")
+@Table(name = "teams",indexes = {
+        @Index(name = "index_name",columnList = "name"),
+        @Index(name = "index_acronym", columnList = "acronym"),
+        @Index(name = "index_budget",columnList ="budget")
+})
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class Team {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
     @Getter @Setter
+
     private String name;
     @Getter @Setter
     private String acronym;
     @Getter@Setter
-    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Player> players=new HashSet<>();
     @Getter @Setter
-    private BigDecimal Budget;
+    private BigDecimal budget;
 
-    public void addPlayer(Player player) {
-        player.setTeam(this);
-        players.add(player);
 
-    }
 }

@@ -6,39 +6,52 @@ import com.team.dto.TeamResponseDto;
 import com.team.models.Player;
 import com.team.models.Team;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 
 @Mapper(componentModel = "spring")
 public interface TeamMapper {
-    TeamMapper INSTANCE= Mappers.getMapper(TeamMapper.class);
+    TeamMapper INSTANCE = Mappers.getMapper(TeamMapper.class);
 
-    @Mapping(target = "players",source = "playerIds",qualifiedByName ="mapPlayerIdsToPlayers" )
-     Team teamRequestDtoToTeam(TeamRequestDto teamRequestDto);
-    @Mapping(target = "players",source = "players",qualifiedByName = "mapPlayersToPlayesDto")
-     TeamResponseDto teamToTeamResponseDto(Team team);
-     Iterable<TeamResponseDto> teamlisteToTeamResponseDto(List<Team> teams);
-    // Page<TeamResponseDto> listeOfTeamsWithTheirPlayersToResponseDto(Page<Team> teams);
-    @Named("mapPlayerIdsToPlayers")
-    default Set<Player> mapPlayerIdsToPlayers(Set<Long> playerIds) {
-        return  playerIds.stream().map(id->{
-            Player player=new Player();
-            player.setId(id);
-            return player;
-        }).collect(Collectors.toSet());
+    default Page<TeamResponseDto> listeOfTeamsWithTheirPlayersToResponseDto(Page<Team> teams) {
+        return teams.map(this::teamToTeamResponseDto);
     }
 
 
-    @Named("mapPlayersToPlayesDto")
+    default Team teamRequestDtoToTeam(TeamRequestDto teamRequestDto) {
+
+        return Team.builder()
+                .acronym(teamRequestDto.getAcronym())
+                .name(teamRequestDto.getName())
+                .players(mapPlayerIdsToPlayers(teamRequestDto.getPlayerIds()))
+                .build();
+
+    }
+
+    default TeamResponseDto teamToTeamResponseDto(Team team) {
+        return TeamResponseDto.builder()
+                .acronym(team.getAcronym())
+                .name(team.getName())
+                .Budge(team.getBudget())
+                .players(mapPlayersToPlayerIds(team.getPlayers()))
+                .build();
+    }
+
+    @Named("mapPlayerIdsToPlayers")
+    default Set<Player> mapPlayerIdsToPlayers(Set<Long> playerIds) {
+        return playerIds.stream().map(Player::new).collect(Collectors.toSet());
+    }
+
+
+    @Named("mapPlayersToPlayersDto")
     default Set<PlayerDto> mapPlayersToPlayerIds(Set<Player> players) {
         return players.stream().map(player -> {
-            PlayerDto playerDto=new PlayerDto();
+            PlayerDto playerDto = new PlayerDto();
             playerDto.setName(player.getName());
             playerDto.setPosition(player.getPosition());
             return playerDto;

@@ -9,8 +9,14 @@ import com.team.models.Team;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -76,4 +82,41 @@ public class TeamMapperTest {
 
 
     }
+
+
+    @Test
+    void MapTeamteamstoTeamResponseDto(){
+
+        Set<Player> players1=Set.of(
+                new Player(1L,"MESSI","attaquant",null),
+                new Player(2L,"RONALDO","attaquant",null)
+
+        );
+        Set<Player> players2=Set.of(
+                new Player(3L,"Pujol","Defenseur",null),
+                new Player(4L,"Figo","attaquant",null)
+
+        );
+        List<Team> teams= Arrays.asList(
+              new  Team(1L,"FC BARCELONE","FCB",players1,new BigDecimal("15000000000.00")),
+              new  Team(2L,"FC BARCELONE","FCB",players2,new BigDecimal("15000000000.00"))
+
+        );
+
+        Pageable pageable= PageRequest.of(0,10);
+        Page<Team> page=new PageImpl<>(teams,pageable,teams.size());
+        Page<TeamResponseDto> teamspageResponsedto =teamMapper.listeOfTeamsWithTheirPlayersToResponseDto(page);
+    assertThat(teamspageResponsedto).isNotNull();
+    assertThat(teamspageResponsedto.getTotalElements()).isEqualTo(teams.size());
+    assertThat(teamspageResponsedto.getTotalPages()).isEqualTo(1);
+    assertThat(teamspageResponsedto.getNumber()).isEqualTo(0);
+    assertThat(teamspageResponsedto.getSize()).isEqualTo(10);
+    assertThat(teamspageResponsedto.getContent().get(0).getName()).isEqualTo("FC BARCELONE");
+    assertThat(teamspageResponsedto.getContent().get(1).getPlayers().size()).isEqualTo(2);
+
+
+
+
+    }
+
 }
