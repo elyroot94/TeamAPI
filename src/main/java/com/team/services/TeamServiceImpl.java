@@ -14,10 +14,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-
-
 import java.util.*;
+
+
+/**
+ * Service pour la gestion des équipes.
+ * Ce service permet de créer des équipes et de récupérer une liste paginée d'équipes avec tri.
+ */
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +30,13 @@ public class TeamServiceImpl implements TeamService {
    final private PlayerRepository playerRepository;
 
 
+    /**
+     * Crée une nouvelle équipe à partir des données fournies.
+     *
+     * @param teamRequestDto Les données de l'équipe à créer.
+     * @return Les informations de l'équipe créée.
+     * @throws RessourceNotFound Si les joueurs associés à l'équipe n'existent pas dans la base de données.
+     */
     @Override
     public TeamResponseDto Create(TeamRequestDto teamRequestDto) {
         Team team = TeamMapper.INSTANCE.teamRequestDtoToTeam(teamRequestDto);
@@ -43,6 +53,15 @@ public class TeamServiceImpl implements TeamService {
         return TeamMapper.INSTANCE.teamToTeamResponseDto(this.teamRepository.save(team));
     }
 
+    /**
+     * Récupère une liste paginée d'équipes avec tri.
+     *
+     * @param pageNo    Le numéro de la page.
+     * @param pageSize  Le nombre d'éléments par page.
+     * @param sort      Le champ de tri (nom, acronyme ou budget).
+     * @param direction La direction du tri (ASC ou DESC).
+     * @return Une page d'équipes triées et paginées.
+     */
     @Override
     public Page<TeamResponseDto> listOFTeams(int pageNo, int pageSize,Tri sort, String direction) {
         Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;

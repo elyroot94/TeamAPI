@@ -52,7 +52,6 @@ public class TeamServiceTest {
         teamRepository = Mockito.mock(TeamRepository.class);
         playerRepository = Mockito.mock(PlayerRepository.class);
         teamService = Mockito.mock(TeamServiceImpl.class, withSettings().useConstructor(teamRepository, playerRepository));
-        doCallRealMethod().when(teamService).Create(any(TeamRequestDto.class));
         teamRequestDto = new TeamRequestDto();
         teamRequestDto.setName("FC BARCELONE");
         teamRequestDto.setAcronym("FCB");
@@ -69,6 +68,7 @@ public class TeamServiceTest {
 
     @Test
     void CreateTeamWithPlayersTest() {
+        doCallRealMethod().when(teamService).Create(any(TeamRequestDto.class));
         when(playerRepository.countPlayersWithIds(teamRequestDto.getPlayerIds())).thenReturn(players.size());
         Team teamcreated = new Team(1L, "FC BARCELONE", "FCB", players, new BigDecimal("15000000000.00"));
         when(teamRepository.save(any(Team.class))).thenReturn(teamcreated);
@@ -84,9 +84,10 @@ public class TeamServiceTest {
     @ParameterizedTest
     @ValueSource(strings = {"name", "budget", "acronym"})
     void listOfTeamsBYTriChamps(String tri) {
+        doCallRealMethod().when(teamService).listOFTeams(any(int.class),any(int.class),any(Tri.class),any(String.class));
         Set<Player> players1 = Set.of(
-                new Player(1L, "MESSI", "attaquant", null),
-                new Player(2L, "RONALDO", "attaquant", null)
+                new Player( "MESSI", "attaquant"),
+                new Player( "RONALDO", "attaquant")
 
         );
         Page<Team> page = new PageImpl<>(Collections.singletonList(new Team(1L, "FC BARCELONE", "FCB", players1, new BigDecimal("15000000000.00"))), PageRequest.of(0, 10), 1);
@@ -94,12 +95,17 @@ public class TeamServiceTest {
         switch (tri) {
             case "name":
                 when(teamRepository.listeOfTeamsWithTheirPlayersOrderByName(any(Pageable.class))).thenReturn(page);
+                break;
             case "acronym":
                 when(teamRepository.listeOfTeamsWithTheirPlayersOrderByAcronym(any(Pageable.class))).thenReturn(page);
+                break;
             case "budget":
                 when(teamRepository.listeOfTeamsWithTheirPlayersOrderByBudget(any(Pageable.class))).thenReturn(page);
+
+                break;
         }
-        Page<TeamResponseDto> resultat = teamService.listOFTeams(0, 10, Tri.valueOf(tri), Sort.Direction.ASC.name());
+        Page<TeamResponseDto> resultat = teamService.listOFTeams(0, 10,Tri.valueOf(tri), Sort.Direction.ASC.name());
+        System.out.println(resultat);
         assertThat(resultat).isNotNull();
         assertThat(resultat.getTotalElements()).isEqualTo(1);
         assertThat(resultat.getTotalPages()).isEqualTo(1);

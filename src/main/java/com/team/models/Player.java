@@ -38,4 +38,6 @@ public class Player {
     private Team team;
 
 
+    public Player(String ronaldo, String attaquant) {
+    }
 }

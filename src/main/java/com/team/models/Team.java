@@ -1,13 +1,11 @@
 package com.team.models;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.ArrayList;
-import java.util.List;
+
 
 @Entity
 @Table(name = "teams",indexes = {

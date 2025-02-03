@@ -4,42 +4,26 @@ package com.team.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.team.Repository.PlayerRepository;
 import com.team.Repository.TeamRepository;
-import com.team.controllers.TeamController;
 import com.team.dto.TeamRequestDto;
 import com.team.models.Player;
 import com.team.models.Team;
 import com.team.models.Tri;
-import com.team.services.TeamService;
-import com.team.services.TeamServiceImpl;
-import jakarta.servlet.ServletContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
+import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.MockMvc;
 import java.math.BigDecimal;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -114,34 +98,37 @@ public class TeamControllerTest {
     }
 
 
-    @Test
-    void testListeOfTeamsSortByname() throws Exception {
-        var players1 = Set.of(new Player(1L
-                , "Messi", "Attaquant", null), new Player(2L, "Pique", "Deffenseur", null));
+    @ParameterizedTest
+    @ValueSource(strings = {"name", "budget", "acronym"})
+    void testListeOfTeamsSortByname(String tri) throws Exception {
+        var players1 = Set.of(new Player("Messi", "Attaquant"), new Player("Pique", "Deffenseur"));
         players1 = new HashSet<>(this.playerRepository.saveAll(players1));
+
+
         var team1 = Team.builder()
                 .acronym("FCB")
                 .name("BARCELONNE")
                 .budget(BigDecimal.valueOf(12558575))
-                .players(players1).build();
-
+                .players(players1)
+                .build();
         this.teamRepository.save(team1);
 
-        var players2 = Set.of(new Player(1L
-                , "Ronaldo", "Attaquant", null), new Player(2L, "Rodri", "Deffenseur", null));
-        players2 = new HashSet<>(this.playerRepository.saveAll(players1));
+
+        var players2 = Set.of(new Player("Ronaldo", "Attaquant"), new Player("Rodri", "Deffenseur"));
+        players2 = new HashSet<>(this.playerRepository.saveAll(players2));
+
         var team2 = Team.builder()
                 .acronym("FCR")
                 .name("Real Madrid")
                 .budget(BigDecimal.valueOf(12558575))
-                .players(players2).build();
+                .players(players2)
+                .build();
         this.teamRepository.save(team2);
 
-         mockMvc.perform(get("/api/teams?sort=" + Tri.valueOf("name")))
+
+        mockMvc.perform(get("/api/teams?sort=" + Tri.valueOf(tri)))
                 .andExpect(status().isOk())
-                 .andExpect(jsonPath("$.content.size()").value(2));
-
-
+                .andExpect(jsonPath("$.content.size()").value(2));
     }
 
 
