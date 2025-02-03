@@ -20,10 +20,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
+
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -78,7 +81,6 @@ public class TeamControllerTest {
         teamRequestDto.setAcronym("FCB");
         teamRequestDto.setBudge(BigDecimal.valueOf(12558575));
         teamRequestDto.setPlayerIds(Set.of(playeraId, playerbId));
-        System.out.println(teamRequestDto.getPlayerIds());
 
         mockMvc.perform(post("/api/teams").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(teamRequestDto)))
@@ -96,6 +98,24 @@ public class TeamControllerTest {
                 .andExpect(jsonPath("$.budge").value("budget requis"));
 
     }
+
+
+    @Test
+    void notfouexceptiontest() throws Exception {
+
+        TeamRequestDto teamRequestDto = new TeamRequestDto();
+        teamRequestDto.setName("BARCELONE");
+        teamRequestDto.setAcronym("FCB");
+        teamRequestDto.setBudge(BigDecimal.valueOf(12558575));
+        teamRequestDto.setPlayerIds(Set.of(7845L,1024886L));
+
+        mockMvc.perform(post("/api/teams").contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(teamRequestDto)))
+                .andExpect(status().isNotFound());
+
+    }
+
+
 
 
     @ParameterizedTest

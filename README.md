@@ -27,14 +27,13 @@ Ce projet est une API REST pour la gestion des équipes et des joueurs. Il perme
 
 * **MapStruct** : Bibliothèque pour le mapping automatique des objets (par exemple, `RequestDto` en `ResponseDto`).
 
-
 ## Prérequis
 
 - Java 17 ou supérieur
 - Docker et Docker Compose
 - MySQL (optionnel, si vous n'utilisez pas Docker)
 
-```## Installation avec Docker Compose
+```##
 
 1. Clonez le dépôt :
 
@@ -42,9 +41,20 @@ Ce projet est une API REST pour la gestion des équipes et des joueurs. Il perme
    ```bash
    git clone https://github.com/elyroot94/TeamAPI.git
    cd TeamAPI
-   ```
+```
 
-`docker-compose up --build`
+## Création du fichier `.env` pour la configuration de MySQL
+
+Créez un fichier `.env` et ajoutez-y :
+
+```
+
+MYSQL_DATABASE=mydatabase
+MYSQL_USER=root
+
+
+docker-compose up
+```
 
 ### **Utilisation de l'API**
 
@@ -64,22 +74,5 @@ curl -X POST http://localhost:8080/api/teams \
         "playerIds":[1,2]
       }'
 ```
+
 > curl -X GET http://localhost:8080/api/teams?sort=name
-
-## Tests
-
-### Tests unitaires
-
-Les tests unitaires vérifient le comportement des composants individuels (comme les services ou les contrôleurs) en isolant les dépendances avec des mocks.
-
-Pour exécuter les tests unitaires, utilisez la commande suivante :
-
-### Tests d'intégration
-
-Les tests d'intégration vérifient le comportement de l'application dans son ensemble, en interagissant avec une base de données en mémoire (H2) et en testant les endpoints de l'API.
-
-Pour exécuter les tests d'intégration, utilisez la commande suivante :
-
-```bash
-./mvnw test && ./mvnw verify
-```
